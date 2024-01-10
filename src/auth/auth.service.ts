@@ -15,8 +15,10 @@ export class AuthService {
     private readonly jwtService: JwtService,
   ) {}
   async login(credentials: LoginDto): Promise<AuthEntity> {
-    const user = await this.prismaService.user.findUnique({
-      where: { email: credentials.email },
+    const user = await this.prismaService.user.findFirst({
+      where: {
+        OR: [{ username: credentials.username }, { email: credentials.email }],
+      },
     });
 
     if (!user)

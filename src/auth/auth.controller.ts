@@ -5,6 +5,7 @@ import { ApiOkResponse, ApiTags } from '@nestjs/swagger';
 import { AuthEntity } from './auth.entity';
 import { CreateUserDto } from 'src/users/user.dto';
 import { UsersService } from 'src/users/users.service';
+import { LoginDtoValidationPipe } from './auth.pipe';
 
 @ApiTags('auth')
 @Controller()
@@ -21,7 +22,10 @@ export class AuthController {
 
   @Post('login')
   @ApiOkResponse({ type: AuthEntity })
-  async login(@Body(ValidationPipe) credentials: LoginDto) {
+  async login(
+    @Body(new LoginDtoValidationPipe())
+    credentials: LoginDto,
+  ) {
     return this.authService.login(credentials);
   }
 }
