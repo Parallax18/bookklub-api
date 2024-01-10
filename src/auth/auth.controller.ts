@@ -1,20 +1,27 @@
-import { Body, Controller, Post } from '@nestjs/common';
+import { Body, Controller, Post, ValidationPipe } from '@nestjs/common';
 import { AuthService } from './auth.service';
-import { SignupDto } from './auth.dto';
-import { ApiTags } from '@nestjs/swagger';
+import { LoginDto } from './auth.dto';
+import { ApiOkResponse, ApiTags } from '@nestjs/swagger';
+import { AuthEntity } from './auth.entity';
+import { CreateUserDto } from 'src/users/user.dto';
+import { UsersService } from 'src/users/users.service';
 
 @ApiTags('auth')
 @Controller()
 export class AuthController {
-  constructor(private readonly authService: AuthService) {}
+  constructor(
+    private readonly authService: AuthService,
+    private readonly usersService: UsersService,
+  ) {}
 
   @Post('signup')
-  async signup(@Body() credentials: SignupDto) {
-    return this.authService.signup(credentials);
+  async create(@Body(ValidationPipe) user: CreateUserDto) {
+    return await this.usersService.create(user);
   }
 
   @Post('login')
-  async login() {
-    return this.authService.login();
+  @ApiOkResponse({ type: AuthEntity })
+  async login(@Body(ValidationPipe) credentials: LoginDto) {
+    return this.authService.login(credentials);
   }
 }

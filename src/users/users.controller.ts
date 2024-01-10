@@ -8,7 +8,7 @@ import {
   Patch,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
-import { CreateUserDto, UpdateUserDto } from './user.dto';
+import { UpdateUserDto } from './user.dto';
 import { Prisma } from '@prisma/client';
 import { ApiTags } from '@nestjs/swagger';
 
@@ -29,11 +29,6 @@ export class UsersController {
   @Get(':id/notifications')
   async findAllUserNotications(@Param('id') id: string) {
     return await this.usersService.findAllUserNotications({ id });
-  }
-
-  @Post()
-  async create(@Body(ValidationPipe) user: CreateUserDto) {
-    return await this.usersService.create(user);
   }
 
   @Post(':id/notify')
