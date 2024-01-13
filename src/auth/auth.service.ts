@@ -7,6 +7,7 @@ import { LoginDto } from './auth.dto';
 import { AuthEntity } from './auth.entity';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { JwtService } from '@nestjs/jwt';
+import * as bcrypt from 'bcrypt';
 
 @Injectable()
 export class AuthService {
@@ -24,7 +25,10 @@ export class AuthService {
     if (!user)
       throw new NotFoundException('Invalid credentials, check and try again');
 
-    const isPasswordValid = user.password === credentials.password;
+    const isPasswordValid = await bcrypt.compare(
+      credentials.password,
+      user.password,
+    );
 
     if (!isPasswordValid) {
       throw new UnauthorizedException(
@@ -33,12 +37,7 @@ export class AuthService {
     }
 
     return {
-      accessToken: this.jwtService.sign(
-        { userId: user.id },
-        {
-          secret: process.env.JWT_SECRET,
-        },
-      ),
+      accessToken: this.jwtService.sign({ userId: user.id }),
       username: user.username,
       email: user.email,
     };

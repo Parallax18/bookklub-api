@@ -4,24 +4,16 @@ import { AppService } from './app.service';
 import { AuthModule } from './auth/auth.module';
 import { UsersModule } from './users/users.module';
 import { PrismaModule } from './prisma/prisma.module';
-import { PassportModule } from '@nestjs/passport';
-import { JwtModule } from '@nestjs/jwt';
 import { ConfigModule } from '@nestjs/config';
-
-console.log(process.env.JWT_SECRET);
+import { BooksModule } from './books/books.module';
 
 @Module({
   imports: [
     ConfigModule.forRoot(),
-    JwtModule.register({
-      secret: process.env.JWT_SECRET,
-      // why is this failing??
-      signOptions: { expiresIn: '7d' },
-    }),
-    PassportModule,
     PrismaModule,
     AuthModule,
     UsersModule,
+    BooksModule,
   ],
   controllers: [AppController],
   providers: [AppService],

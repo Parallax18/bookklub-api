@@ -1,5 +1,9 @@
 import { NestFactory } from '@nestjs/core';
-import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
+import {
+  SwaggerModule,
+  DocumentBuilder,
+  SwaggerDocumentOptions,
+} from '@nestjs/swagger';
 import { AppModule } from './app.module';
 
 async function bootstrap() {
@@ -8,10 +12,14 @@ async function bootstrap() {
     .setTitle('Bookklub API')
     .setDescription('The API for bookklub app')
     .setVersion('1.0')
-    .addTag('users')
+    .addBearerAuth()
     .build();
-  const document = SwaggerModule.createDocument(app, config);
+
   app.setGlobalPrefix('api');
+  const options: SwaggerDocumentOptions = {
+    operationIdFactory: (controllerKey: string, methodKey: string) => methodKey,
+  };
+  const document = SwaggerModule.createDocument(app, config, options);
   SwaggerModule.setup('api', app, document);
   await app.listen(3000);
 }
