@@ -1,12 +1,15 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { CreateRentalDto } from './rental.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { BooksService } from 'src/books/books.service';
 import { UsersService } from 'src/users/users.service';
 import { NotificationType } from '@prisma/client';
+import * as cron from 'node-cron';
 
 @Injectable()
 export class RentalsService {
+  private readonly logger = new Logger(RentalsService.name);
+
   constructor(
     private readonly prismaService: PrismaService,
     private readonly bookService: BooksService,
@@ -48,6 +51,7 @@ export class RentalsService {
     const returnDate = new Date(
       new Date().getTime() + rental.durationOfRental * 24 * 60 * 60 * 1000,
     );
+    returnDate.setHours(11, 59, 0, 0);
 
     await this.userService.notify(rental.renterId, {
       type: NotificationType.ACCEPTEDREQUEST,
@@ -95,5 +99,33 @@ export class RentalsService {
 
   delete(id: string) {
     return this.prismaService.rental.delete({ where: { id } });
+  }
+
+  async findAndUpdateOverdueRentals() {
+    const overdueRentals = await this.prismaService.rental.findMany({
+      where: { returnDate: { lt: new Date() } },
+    });
+
+    if (overdueRentals.length === 0) return [];
+
+    const updatedRentals = await this.prismaService.rental.updateMany({
+      where: { returnDate: { lt: new Date() } },
+      data: {
+        isOverdue: true,
+      },
+    });
+
+    return updatedRentals;
+  }
+
+  runCronJob(): void {
+    cron.schedule('59 23 * * *', async () => {
+      try {
+        this.logger.log('Running cron job');
+        this.findAndUpdateOverdueRentals();
+      } catch (err) {
+        this.logger.error('Error in cron job:', err);
+      }
+    });
   }
 }

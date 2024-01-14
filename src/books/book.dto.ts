@@ -20,7 +20,7 @@ export class CreateBookDto {
 
   @IsNotEmpty()
   @ApiProperty()
-  coverImg: string;
+  coverImg: Express.Multer.File;
 
   @IsString()
   @IsNotEmpty()

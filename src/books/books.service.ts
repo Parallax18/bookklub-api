@@ -2,18 +2,45 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateBookDto } from './book.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { UsersService } from 'src/users/users.service';
+import { FirebaseService } from 'src/firebase/firebase.service';
+// import * as fs from 'fs';
+// import { Readable } from 'stream';
+
+// const filePath = '/Users/adnankayode/Downloads/Affiliate.jpg'; // Replace with your file path
+// const fileContent = fs.readFileSync(filePath, { encoding: 'base64' });
+
+// console.log(fileContent);
 
 @Injectable()
 export class BooksService {
   constructor(
     private readonly prismaService: PrismaService,
     private readonly userService: UsersService,
+    private readonly firebaseService: FirebaseService,
   ) {}
   async create(book: CreateBookDto) {
     const owner = await this.userService.findOne(book.owner);
+    // const buffer = Buffer.from(book.coverImg, 'base64');
+
+    // const dummyFile: Express.Multer.File = {
+    //   fieldname: 'coverImg',
+    //   originalname: 'coverImg',
+    //   encoding: 'base64',
+    //   mimetype: 'image/png', // Adjust the mimetype according to your image type
+    //   size: buffer.length, // The size of the buffer
+    //   buffer: buffer,
+    //   stream: new Readable(),
+    //   destination: '',
+    //   filename: 'testtest',
+    //   path: '',
+    // };
+
+    const coverImg = await this.firebaseService.uploadImage(book.coverImg);
+
+    console.log({ coverImg });
 
     return this.prismaService.book.create({
-      data: { ...book, owner: { connect: { id: owner.id } } },
+      data: { ...book, coverImg, owner: { connect: { id: owner.id } } },
     });
   }
 

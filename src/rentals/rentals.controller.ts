@@ -60,11 +60,6 @@ export class RentalsController {
     return this.rentalsService.findOne(id);
   }
 
-  // @Patch(':id')
-  // update(@Param('id') id: string, @Body() updateRentalDto: UpdateRentalDto) {
-  //   return this.rentalsService.update(+id, updateRentalDto);
-  // }
-
   @Delete(':id')
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth()

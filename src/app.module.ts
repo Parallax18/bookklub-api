@@ -7,6 +7,7 @@ import { PrismaModule } from './prisma/prisma.module';
 import { ConfigModule } from '@nestjs/config';
 import { BooksModule } from './books/books.module';
 import { RentalsModule } from './rentals/rentals.module';
+import { FirebaseModule } from './firebase/firebase.module';
 
 @Module({
   imports: [
@@ -16,6 +17,7 @@ import { RentalsModule } from './rentals/rentals.module';
     UsersModule,
     BooksModule,
     RentalsModule,
+    FirebaseModule,
   ],
   controllers: [AppController],
   providers: [AppService],
