@@ -1,7 +1,7 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateUserDto, UpdateUserDto } from './user.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
-import { Prisma, User as UserModel } from '@prisma/client';
+import { User as UserModel } from '@prisma/client';
 import * as bcrypt from 'bcrypt';
 
 @Injectable()
@@ -12,8 +12,8 @@ export class UsersService {
     return this.prismaService.user.findMany();
   }
 
-  async findOne(id: string) {
-    const user = this.prismaService.user.findUnique({ where: { id } });
+  async findOne(id: string): Promise<UserModel> {
+    const user = await this.prismaService.user.findUnique({ where: { id } });
     if (!user) throw new NotFoundException('User not found');
     return user;
   }
@@ -41,16 +41,12 @@ export class UsersService {
     });
   }
 
-  async notify({
-    id,
-    notification,
-  }: {
-    id: string;
-    notification: Prisma.NotificationCreateInput;
-  }) {
+  async notify(userId: string, data) {
     return this.prismaService.user.update({
-      where: { id },
-      data: { notifications: { create: notification } },
+      where: { id: userId },
+      data: {
+        notifications: { create: { type: data.type, info: data?.info } },
+      },
     });
   }
 

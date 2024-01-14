@@ -3,15 +3,13 @@ import {
   Get,
   Post,
   Body,
-  Patch,
   Param,
-  Delete,
   UseGuards,
+  Query,
 } from '@nestjs/common';
 import { BooksService } from './books.service';
-import { CreateBookDto } from './dto/create-book.dto';
-import { UpdateBookDto } from './dto/update-book.dto';
-import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
+import { CreateBookDto } from './book.dto';
+import { ApiBearerAuth, ApiTags, ApiQuery } from '@nestjs/swagger';
 import { JwtAuthGuard } from 'src/auth/jwt/jwt-auth.guard';
 
 @ApiTags('books')
@@ -22,35 +20,56 @@ export class BooksController {
   @Post()
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth()
-  create(@Body() createBookDto: CreateBookDto) {
-    return this.booksService.create(createBookDto);
+  async create(@Body() createBookDto: CreateBookDto) {
+    return await this.booksService.create(createBookDto);
   }
 
   @Get()
-  @UseGuards(JwtAuthGuard)
-  @ApiBearerAuth()
-  findAll() {
-    return this.booksService.findAll();
+  @ApiQuery({
+    name: 'title',
+    required: false,
+    type: String,
+    description: 'Filter books by title',
+  })
+  @ApiQuery({
+    name: 'author',
+    required: false,
+    type: String,
+    description: 'Filter books by author',
+  })
+  @ApiQuery({
+    name: 'genre',
+    required: false,
+    type: String,
+    description: 'Filter books by genre',
+  })
+  @ApiQuery({
+    name: 'state',
+    required: false,
+    type: String,
+    description: 'Filter books by state',
+  })
+  @ApiQuery({
+    name: 'country',
+    required: false,
+    type: String,
+    description: 'Filter books by country',
+  })
+  async findAll(
+    @Query()
+    params: {
+      title: string;
+      author: string;
+      genre: string;
+      state: string;
+      country: string;
+    },
+  ) {
+    return await this.booksService.findAll(params);
   }
 
   @Get(':id')
-  @UseGuards(JwtAuthGuard)
-  @ApiBearerAuth()
-  findOne(@Param('id') id: string) {
-    return this.booksService.findOne(+id);
-  }
-
-  @Patch(':id')
-  @UseGuards(JwtAuthGuard)
-  @ApiBearerAuth()
-  update(@Param('id') id: string, @Body() updateBookDto: UpdateBookDto) {
-    return this.booksService.update(+id, updateBookDto);
-  }
-
-  @Delete(':id')
-  @UseGuards(JwtAuthGuard)
-  @ApiBearerAuth()
-  remove(@Param('id') id: string) {
-    return this.booksService.remove(+id);
+  async findOne(@Param('id') id: string) {
+    return await this.booksService.findOne(id);
   }
 }

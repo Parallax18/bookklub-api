@@ -15,47 +15,58 @@ model User {
   mobile        String         @unique
   password      String
   books         Book[]         @relation("userBooks")
-  shelf         Book[]         @relation("userShelf")
   notifications Notification[]
+  rentals       Rental[]
   address       String
   state         String
   country       String
 }
 
 model Book {
-  id              String    @id @default(auto()) @map("_id") @db.ObjectId
-  title           String
-  author          String
-  description     String
-  coverImg        String
-  genre           String
-  owner           User      @relation("userBooks", fields: [ownerId], references: [id])
-  ownerId         String    @db.ObjectId
-  borrower        User?     @relation("userShelf", fields: [borrowerId], references: [id])
-  borrowerId      String?   @db.ObjectId
-  createdAt       DateTime  @default(now())
-  isBorrowed      Boolean?
-  isRequested     Boolean?
-  returnDate      DateTime?
-  isReturnOverdue Boolean?
-  address         String
-  state           String
-  country         String
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  title       String
+  author      String
+  description String
+  coverImg    String
+  genre       String
+  owner       User     @relation("userBooks", fields: [ownerId], references: [id])
+  ownerId     String   @db.ObjectId
+  createdAt   DateTime @default(now())
+  address     String
+  state       String
+  country     String
+  rental      Rental?  @relation("rentalBook")
+  rentalId    String?  @db.ObjectId
 }
 
 enum NotificationType {
-  BORROWREQUEST
+  RENTREQUEST
   RETURNOVERDUE
   ACCEPTEDREQUEST
   REJECTEDREQUEST
   BOOKRECEIVED
 }
 
+
 model Notification {
   id        String           @id @default(auto()) @map("_id") @db.ObjectId
-  title     String
+  user User @relation(fields: [userId], references: [id])
+  userId    String           @db.ObjectId
   type      NotificationType
   createdAt DateTime         @default(now())
-  User      User?            @relation(fields: [userId], references: [id])
-  userId    String?          @db.ObjectId
+  info      Json?           
+}
+
+model Rental {
+  id               String    @id @default(auto()) @map("_id") @db.ObjectId
+  durationOfRental Int
+  returnDate       DateTime?
+  renter           User      @relation(fields: [renterId], references: [id])
+  renterId         String    @db.ObjectId
+  createdAt        DateTime  @default(now())
+  isOverdue        Boolean?
+  isAccepted       Boolean?
+  isFulfilled      Boolean?
+  book             Book      @relation(name: "rentalBook", fields: [bookId], references: [id])
+  bookId           String    @unique @db.ObjectId
 }
