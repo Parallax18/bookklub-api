@@ -24,15 +24,17 @@ export class RentalsService {
       },
     });
 
-    await this.userService.notify(renter.id, {
+    await this.userService.notify(book.owner.id, {
       type: NotificationType.RENTREQUEST,
       info: {
-        username: renter.username,
+        renter: renter.username,
         duration: rental.durationOfRental,
         booktitle: book.title,
         rentalId: rental.id,
       },
     });
+
+    return rental;
   }
 
   async accept(id: string) {
@@ -50,6 +52,7 @@ export class RentalsService {
     await this.userService.notify(rental.renterId, {
       type: NotificationType.ACCEPTEDREQUEST,
       info: {
+        bookowner: book.owner.username,
         booktitle: book.title,
       },
     });
@@ -60,8 +63,22 @@ export class RentalsService {
     });
   }
 
-  findAll() {
-    return `This action returns all rentals`;
+  async reject(id: string) {
+    const rental = await this.findOne(id);
+    const book = await this.bookService.findOne(rental.bookId);
+    await this.userService.notify(rental.renterId, {
+      type: NotificationType.REJECTEDREQUEST,
+      info: {
+        booktitle: book.title,
+        bookowner: book.owner.username,
+      },
+    });
+
+    return await this.delete(rental.id);
+  }
+
+  async findAll() {
+    return await this.prismaService.rental.findMany();
   }
 
   async findOne(id: string) {
@@ -76,7 +93,7 @@ export class RentalsService {
   //   return `This action updates a #${id} rental`;
   // }
 
-  remove(id: number) {
-    return `This action removes a #${id} rental`;
+  delete(id: string) {
+    return this.prismaService.rental.delete({ where: { id } });
   }
 }

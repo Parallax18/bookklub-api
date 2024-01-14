@@ -35,8 +35,7 @@ model Book {
   address     String
   state       String
   country     String
-  rental      Rental?  @relation("rentalBook")
-  rentalId    String?  @db.ObjectId
+  rentals      Rental[]  @relation("bookRentals")
 }
 
 enum NotificationType {
@@ -67,6 +66,6 @@ model Rental {
   isOverdue        Boolean?
   isAccepted       Boolean?
   isFulfilled      Boolean?
-  book             Book      @relation(name: "rentalBook", fields: [bookId], references: [id])
-  bookId           String    @unique @db.ObjectId
+  book             Book      @relation(name: "bookRentals", fields: [bookId], references: [id])
+  bookId           String    @db.ObjectId
 }

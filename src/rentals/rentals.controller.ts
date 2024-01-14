@@ -27,9 +27,23 @@ export class RentalsController {
   @Post(':id/accept')
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth()
-  @ApiResponse({ status: 200, description: 'Rental accepted successfully' })
+  @ApiResponse({
+    status: 200,
+    description: 'Rental request accepted successfully',
+  })
   accept(@Param('id') id: string) {
     return this.rentalsService.accept(id);
+  }
+
+  @Post(':id/reject')
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
+  @ApiResponse({
+    status: 200,
+    description: 'Rental request rejected successfully',
+  })
+  reject(@Param('id') id: string) {
+    return this.rentalsService.reject(id);
   }
 
   @Get()
@@ -54,7 +68,11 @@ export class RentalsController {
   @Delete(':id')
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth()
+  @ApiResponse({
+    status: 200,
+    description: 'Rental request deleted successfully',
+  })
   remove(@Param('id') id: string) {
-    return this.rentalsService.remove(+id);
+    return this.rentalsService.delete(id);
   }
 }

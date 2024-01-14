@@ -25,17 +25,22 @@ export class BooksService {
     country: string;
   }) {
     const books = this.prismaService.book.findMany({
-      ...(params && {
-        where: {
+      where: {
+        OR: [
+          { rentals: { every: { isAccepted: null } } },
+          { rentals: { every: { id: undefined } } },
+        ],
+        ...(params && {
           title: { contains: params.title, mode: 'insensitive' },
           author: { contains: params.author, mode: 'insensitive' },
           genre: { contains: params.genre, mode: 'insensitive' },
           state: { contains: params.state, mode: 'insensitive' },
           country: { contains: params.country, mode: 'insensitive' },
-        },
-      }),
+        }),
+      },
       include: {
-        rental: true,
+        rentals: true,
+        owner: true,
       },
     });
 
@@ -58,6 +63,7 @@ export class BooksService {
             address: true,
           },
         },
+        rentals: true,
       },
     });
     if (!book) throw new NotFoundException('Book not found');
