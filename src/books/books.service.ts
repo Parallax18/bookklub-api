@@ -18,8 +18,7 @@ export class BooksService {
     private readonly userService: UsersService,
     private readonly firebaseService: FirebaseService,
   ) {}
-  async create(book: CreateBookDto) {
-    const owner = await this.userService.findOne(book.owner);
+  async create(book: CreateBookDto & { owner: string }) {
     // const buffer = Buffer.from(book.coverImg, 'base64');
 
     // const dummyFile: Express.Multer.File = {
@@ -37,10 +36,8 @@ export class BooksService {
 
     const coverImg = await this.firebaseService.uploadImage(book.coverImg);
 
-    console.log({ coverImg });
-
     return this.prismaService.book.create({
-      data: { ...book, coverImg, owner: { connect: { id: owner.id } } },
+      data: { ...book, coverImg, owner: { connect: { id: book.owner } } },
     });
   }
 

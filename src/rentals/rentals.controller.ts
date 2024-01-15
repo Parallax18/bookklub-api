@@ -6,6 +6,7 @@ import {
   Param,
   Delete,
   UseGuards,
+  Request,
 } from '@nestjs/common';
 import { RentalsService } from './rentals.service';
 import { CreateRentalDto } from './rental.dto';
@@ -20,8 +21,11 @@ export class RentalsController {
   @Post()
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth()
-  request(@Body() createRentalDto: CreateRentalDto) {
-    return this.rentalsService.request(createRentalDto);
+  request(@Body() createRentalDto: CreateRentalDto, @Request() req) {
+    return this.rentalsService.request({
+      ...createRentalDto,
+      renter: req.user.id,
+    });
   }
 
   @Post(':id/accept')

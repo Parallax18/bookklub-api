@@ -10,11 +10,6 @@ export class CreateRentalDto {
   @IsString()
   @IsNotEmpty()
   @ApiProperty()
-  renter: string;
-
-  @IsString()
-  @IsNotEmpty()
-  @ApiProperty()
   book: string;
 }
 export class UpdateRentalDto extends PartialType(CreateRentalDto) {}

@@ -30,11 +30,6 @@ export class CreateBookDto {
   @IsString()
   @IsNotEmpty()
   @ApiProperty()
-  owner: string;
-
-  @IsString()
-  @IsNotEmpty()
-  @ApiProperty()
   address: string;
 
   @IsString()

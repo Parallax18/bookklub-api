@@ -6,6 +6,7 @@ import {
   Param,
   UseGuards,
   Query,
+  Request,
 } from '@nestjs/common';
 import { BooksService } from './books.service';
 import { CreateBookDto } from './book.dto';
@@ -20,8 +21,11 @@ export class BooksController {
   @Post()
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth()
-  async create(@Body() createBookDto: CreateBookDto) {
-    return await this.booksService.create(createBookDto);
+  async create(@Body() book: CreateBookDto, @Request() req) {
+    return await this.booksService.create({
+      ...book,
+      owner: req.user.id,
+    });
   }
 
   @Get()

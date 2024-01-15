@@ -15,7 +15,7 @@ export class RentalsService {
     private readonly bookService: BooksService,
     private readonly userService: UsersService,
   ) {}
-  async request(rentalData: CreateRentalDto) {
+  async request(rentalData: CreateRentalDto & { renter: string }) {
     const book = await this.bookService.findOne(rentalData.book);
     const renter = await this.userService.findOne(rentalData.renter);
 
@@ -23,7 +23,7 @@ export class RentalsService {
       data: {
         ...rentalData,
         book: { connect: { id: book.id } },
-        renter: { connect: { id: renter.id } },
+        renter: { connect: { id: rentalData.renter } },
       },
     });
 
