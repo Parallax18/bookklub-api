@@ -9,7 +9,7 @@ export class FirebaseService {
   constructor() {
     if (!firebaseAdmin.apps.length) {
       // eslint-disable-next-line @typescript-eslint/no-var-requires
-      const serviceAccount = require('');
+      const serviceAccount = require('../../V1.json');
       const app = firebaseAdmin.initializeApp({
         credential: firebaseAdmin.credential.cert(serviceAccount),
         storageBucket: 'gs://bookklub-v0.appspot.com',

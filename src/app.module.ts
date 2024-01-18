@@ -8,6 +8,8 @@ import { ConfigModule } from '@nestjs/config';
 import { BooksModule } from './books/books.module';
 import { RentalsModule } from './rentals/rentals.module';
 import { FirebaseModule } from './firebase/firebase.module';
+import { ChatGateway } from './chat/chat.gateway';
+import { ChatModule } from './chat/chat.module';
 
 @Module({
   imports: [
@@ -18,8 +20,9 @@ import { FirebaseModule } from './firebase/firebase.module';
     BooksModule,
     RentalsModule,
     FirebaseModule,
+    ChatModule,
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [AppService, ChatGateway],
 })
 export class AppModule {}
