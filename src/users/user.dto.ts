@@ -1,18 +1,8 @@
 import { PartialType } from '@nestjs/mapped-types';
 import { ApiProperty } from '@nestjs/swagger';
-import {
-  IsMobilePhone,
-  IsNotEmpty,
-  IsString,
-  MinLength,
-} from 'class-validator';
+import { IsMobilePhone, IsNotEmpty, IsString } from 'class-validator';
 
 export class CreateUserDto {
-  @IsString()
-  @IsNotEmpty()
-  @ApiProperty()
-  email: string;
-
   @IsString()
   @IsNotEmpty()
   @ApiProperty()
@@ -23,12 +13,6 @@ export class CreateUserDto {
   @IsMobilePhone()
   @ApiProperty()
   mobile: string;
-
-  @IsString()
-  @IsNotEmpty()
-  @MinLength(6)
-  @ApiProperty()
-  password: string;
 
   @IsString()
   @IsNotEmpty()
@@ -44,6 +28,16 @@ export class CreateUserDto {
   @IsNotEmpty()
   @ApiProperty()
   country: string;
+
+  @IsString()
+  @IsNotEmpty()
+  @ApiProperty()
+  avatar: string;
+
+  @IsString()
+  @IsNotEmpty()
+  @ApiProperty()
+  token: string;
 }
 
 export class UpdateUserDto extends PartialType(CreateUserDto) {}
