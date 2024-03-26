@@ -17,10 +17,6 @@ export class AuthEntity {
 export class LoginEntity extends UserEntity {
   @ApiProperty()
   accessToken: string;
-  @ApiProperty()
-  wallet_address: string;
-  @ApiProperty()
-  wallet_balance: string;
 }
 
 export class SignUpEntity extends UserEntity {

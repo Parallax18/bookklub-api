@@ -67,7 +67,6 @@ export class AuthService {
         {
           isVerified: true,
           email: decoded.email,
-          password: decoded.password,
         },
         { expiresIn: '1h' },
       );
@@ -80,15 +79,11 @@ export class AuthService {
 
   private async generateOtpAndToken(data: GenerateAndSendOtpDTO) {
     const OTP = this.otpHelper.generateOtp();
-    const hashedPassword = await bcrypt.hash(
-      data.password,
-      Number(process.env.HASH_ROUNDS),
-    );
+
     const token = this.jwtService.sign(
       {
         otp: OTP,
         email: data.email,
-        password: hashedPassword,
       },
       { expiresIn: '1h' },
     );

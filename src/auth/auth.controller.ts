@@ -8,7 +8,12 @@ import {
   ResetPasswordDto,
 } from './auth.dto';
 import { ApiOkResponse, ApiTags } from '@nestjs/swagger';
-import { AuthEntity, GenericResponseEntity, OTPEntity } from './auth.entity';
+import {
+  AuthEntity,
+  GenericResponseEntity,
+  OTPEntity,
+  SignUpEntity,
+} from './auth.entity';
 import { CreateUserDto } from 'src/users/user.dto';
 import { UsersService } from 'src/users/users.service';
 import { LoginDtoValidationPipe } from './auth.pipe';
@@ -23,6 +28,7 @@ export class AuthController {
   ) {}
 
   @Post('signup')
+  @ApiOkResponse({ type: SignUpEntity })
   async create(@Body(ValidationPipe) user: CreateUserDto) {
     return await this.usersService.create(user);
   }
