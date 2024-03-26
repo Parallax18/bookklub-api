@@ -1,14 +1,6 @@
-import {
-  Body,
-  Controller,
-  Get,
-  Param,
-  ValidationPipe,
-  Patch,
-  UseGuards,
-} from '@nestjs/common';
+import { Controller, Get, Param, UseGuards } from '@nestjs/common';
 import { UsersService } from './users.service';
-import { UpdateUserDto } from './user.dto';
+
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { JwtAuthGuard } from 'src/auth/jwt/jwt-auth.guard';
 
@@ -35,15 +27,5 @@ export class UsersController {
   @ApiBearerAuth()
   async findAllUserNotications(@Param('id') id: string) {
     return await this.usersService.findAllUserNotications({ id });
-  }
-
-  @Patch(':id')
-  @UseGuards(JwtAuthGuard)
-  @ApiBearerAuth()
-  async update(
-    @Param('id') id: string,
-    @Body(ValidationPipe) data: UpdateUserDto,
-  ) {
-    return await this.usersService.update(id, data);
   }
 }

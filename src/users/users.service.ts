@@ -1,12 +1,20 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
-import { CreateUserDto, UpdateUserDto } from './user.dto';
+import {
+  ConflictException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
+import { CreateUserDto } from './user.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { User as UserModel } from '@prisma/client';
-import * as bcrypt from 'bcrypt';
+
+import { JwtService } from '@nestjs/jwt';
 
 @Injectable()
 export class UsersService {
-  constructor(private readonly prismaService: PrismaService) {}
+  constructor(
+    private readonly prismaService: PrismaService,
+    private readonly jwtService: JwtService,
+  ) {}
 
   async findAll(): Promise<UserModel[]> {
     return this.prismaService.user.findMany();
@@ -18,26 +26,24 @@ export class UsersService {
     return user;
   }
 
-  async create(user: CreateUserDto): Promise<UserModel> {
-    const hashedPassword = await bcrypt.hash(
-      user.password,
-      Number(process.env.HASH_ROUNDS),
-    );
-
-    user.password = hashedPassword;
-    return this.prismaService.user.create({ data: user });
-  }
-
-  async update(id: string, data: UpdateUserDto) {
-    if (data.password) {
-      data.password = await bcrypt.hash(
-        data.password,
-        Number(process.env.HASH_ROUNDS),
-      );
+  async create(data: CreateUserDto): Promise<UserModel> {
+    const { password, email } = this.jwtService.decode(data.token);
+    const existingUser = await this.prismaService.user.findFirst({
+      where: {
+        OR: [{ username: data.username }, { email }, { mobile: data.mobile }],
+      },
+    });
+    if (existingUser) {
+      if (existingUser.username === data.username)
+        throw new ConflictException('Username taken', '409');
+      if (existingUser.email === email)
+        throw new ConflictException('Email taken', '409');
+      if (existingUser.mobile === data.mobile)
+        throw new ConflictException('Phone number taken', '409');
     }
-    return this.prismaService.user.update({
-      where: { id },
-      data,
+    delete data.token;
+    return this.prismaService.user.create({
+      data: { ...data, is_email_verified: true, password, email },
     });
   }
 

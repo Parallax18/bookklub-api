@@ -10,6 +10,7 @@ import { RentalsModule } from './rentals/rentals.module';
 import { FirebaseModule } from './firebase/firebase.module';
 import { ChatGateway } from './chat/chat.gateway';
 import { ChatModule } from './chat/chat.module';
+import { JwtStrategy } from './auth/jwt/jwt.strategy';
 
 @Module({
   imports: [
@@ -23,6 +24,6 @@ import { ChatModule } from './chat/chat.module';
     ChatModule,
   ],
   controllers: [AppController],
-  providers: [AppService, ChatGateway],
+  providers: [AppService, JwtStrategy, ChatGateway],
 })
 export class AppModule {}

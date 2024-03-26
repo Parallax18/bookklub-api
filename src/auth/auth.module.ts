@@ -8,6 +8,8 @@ import { PassportModule } from '@nestjs/passport';
 import { PrismaModule } from 'src/prisma/prisma.module';
 import { UsersModule } from 'src/users/users.module';
 import { JwtStrategy } from './jwt/jwt.strategy';
+import { MailerHelper } from 'src/helpers/mailer.helper';
+import { OTPHelper } from 'src/helpers/otp.helper';
 
 @Module({
   imports: [
@@ -20,6 +22,13 @@ import { JwtStrategy } from './jwt/jwt.strategy';
     UsersModule,
   ],
   controllers: [AuthController],
-  providers: [AuthService, PrismaService, UsersService, JwtStrategy],
+  providers: [
+    OTPHelper,
+    MailerHelper,
+    AuthService,
+    PrismaService,
+    UsersService,
+    JwtStrategy,
+  ],
 })
 export class AuthModule {}

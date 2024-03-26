@@ -42,3 +42,45 @@ export class LoginDto {
   @ApiProperty()
   password: string;
 }
+
+export class ConfirmOtpDto {
+  @IsString()
+  @ApiProperty()
+  otp: string;
+
+  @IsString()
+  @ApiProperty()
+  token: string;
+}
+
+export class OtpDto {
+  @IsEmail()
+  @IsNotEmpty()
+  @ApiProperty()
+  email: string;
+}
+
+export class GenerateAndSendOtpDTO {
+  @IsEmail()
+  @IsNotEmpty()
+  @ApiProperty()
+  email: string;
+
+  @IsString()
+  @IsNotEmpty()
+  @MinLength(6)
+  @ApiProperty()
+  password: string;
+}
+
+export class ResetPasswordDto {
+  @IsString()
+  @IsNotEmpty()
+  @ApiProperty()
+  token: string;
+
+  @IsEmail()
+  @IsNotEmpty()
+  @ApiProperty()
+  password: string;
+}
