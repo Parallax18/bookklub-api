@@ -8,16 +8,12 @@ import {
   ResetPasswordDto,
 } from './auth.dto';
 import { ApiOkResponse, ApiTags } from '@nestjs/swagger';
-import {
-  AuthEntity,
-  GenericResponseEntity,
-  OTPEntity,
-  SignUpEntity,
-} from './auth.entity';
+import { AuthEntity, OTPEntity, SignUpEntity } from './auth.entity';
 import { CreateUserDto } from 'src/users/user.dto';
 import { UsersService } from 'src/users/users.service';
 import { LoginDtoValidationPipe } from './auth.pipe';
 import { UserEntity } from 'src/users/user.entity';
+import { EmailType } from 'src/helpers/interfaces/mailer.interfaces';
 
 @ApiTags('auth')
 @Controller()
@@ -45,7 +41,7 @@ export class AuthController {
   @Post('otp')
   @ApiOkResponse({ type: OTPEntity })
   async generateAndSendOtp(@Body() data: GenerateAndSendOtpDTO) {
-    return this.authService.generateAndSendOtp(data);
+    return this.authService.generateAndSendOtp(data, EmailType.OTP);
   }
 
   @Post('otp/confirm')
@@ -55,13 +51,13 @@ export class AuthController {
   }
 
   @Post('forgot-password')
-  @ApiOkResponse({ type: GenericResponseEntity })
+  @ApiOkResponse({ type: OTPEntity })
   async forgotPassword(@Body() data: OtpDto) {
-    return this.authService.forgotPassword(data);
+    return this.authService.generateAndSendOtp(data, EmailType.RESET_PASSWORD);
   }
 
   @Post('reset-password')
-  @ApiOkResponse({ type: GenericResponseEntity })
+  @ApiOkResponse({ type: UserEntity })
   async resetPassword(@Body() data: ResetPasswordDto) {
     return await this.authService.resetPassword(data);
   }

@@ -77,7 +77,7 @@ export class AuthService {
     }
   }
 
-  private async generateOtpAndToken(data: GenerateAndSendOtpDTO) {
+  private async generateOtpAndToken(data: GenerateAndSendOtpDTO | OtpDto) {
     const OTP = this.otpHelper.generateOtp();
 
     const token = this.jwtService.sign(
@@ -91,11 +91,14 @@ export class AuthService {
     return { token, OTP };
   }
 
-  async generateAndSendOtp(data: GenerateAndSendOtpDTO) {
+  async generateAndSendOtp(
+    data: GenerateAndSendOtpDTO | OtpDto,
+    type: EmailType,
+  ) {
     const { OTP, token } = await this.generateOtpAndToken(data);
 
     await this.mailer.sendMail({
-      type: EmailType.OTP,
+      type,
       options: {
         to: data.email,
         content: {
@@ -136,26 +139,22 @@ export class AuthService {
   }
 
   async resetPassword(data: ResetPasswordDto) {
-    const { password: oldPassword, id } = this.jwtService.decode(data.token);
     const user = await this.prismaService.user.findUnique({
-      where: { id },
+      where: { email: data.email },
     });
     if (!user) throw new NotFoundException('User not found');
-    if (!oldPassword) throw new BadRequestException('Invalid token');
 
-    if (oldPassword !== user.password)
-      throw new BadRequestException('Invalid token');
     const hashedNewPassword = await bcrypt.hash(
       data.password,
       Number(process.env.HASH_ROUNDS),
     );
 
     const updatedUser = await this.prismaService.user.update({
-      where: { id },
+      where: { id: user.id },
       data: { password: hashedNewPassword },
     });
 
     delete updatedUser.password;
-    return { message: 'Password has been reset' };
+    return updatedUser;
   }
 }

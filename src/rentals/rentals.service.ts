@@ -16,12 +16,12 @@ export class RentalsService {
     private readonly userService: UsersService,
   ) {}
   async request(rentalData: CreateRentalDto & { renter: string }) {
-    const book = await this.bookService.findOne(rentalData.book);
+    const book = await this.bookService.findOne(rentalData.bookId);
     const renter = await this.userService.findOne(rentalData.renter);
 
     const rental = await this.prismaService.rental.create({
       data: {
-        ...rentalData,
+        durationOfRental: rentalData.durationOfRental,
         book: { connect: { id: book.id } },
         renter: { connect: { id: rentalData.renter } },
       },
