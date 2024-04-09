@@ -74,13 +74,15 @@ export class GenerateAndSendOtpDTO {
 }
 
 export class ResetPasswordDto {
-  @IsEmail()
-  @IsNotEmpty()
-  @ApiProperty()
-  email: string;
   @IsString()
   @IsNotEmpty()
   @MinLength(8)
   @ApiProperty()
   password: string;
+  @IsString()
+  @ApiProperty()
+  otp: string;
+  @IsString()
+  @ApiProperty()
+  token: string;
 }

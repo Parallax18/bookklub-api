@@ -97,17 +97,17 @@ export class AuthService {
   ) {
     const { OTP, token } = await this.generateOtpAndToken(data);
 
-    // await this.mailer.sendMail({
-    //   type,
-    //   options: {
-    //     to: data.email,
-    //     content: {
-    //       OTP,
-    //       name: data.email,
-    //     },
-    //   },
-    // });
-    console.log({ OTP });
+    await this.mailer.sendMail({
+      type,
+      options: {
+        to: data.email,
+        content: {
+          OTP,
+          name: data.email,
+        },
+      },
+    });
+
     return { token };
   }
 
@@ -119,30 +119,20 @@ export class AuthService {
     if (!existingUser) throw new NotFoundException('User does not exist');
     if (!existingUser.is_email_verified)
       throw new ForbiddenException('User email is not verified');
-
-    const token = this.jwtService.sign(
-      { password: existingUser.password, id: existingUser.id },
-      { expiresIn: '1h' },
+    return await this.generateAndSendOtp(
+      { email: data.email },
+      EmailType.RESET_PASSWORD,
     );
-    await this.mailer.sendMail({
-      options: {
-        to: existingUser.email,
-        content: {
-          resetPasswordUrl: `${resetPasswordUrl}?token=${token}`,
-          name: existingUser.username,
-        },
-      },
-      type: EmailType.RESET_PASSWORD,
-    });
-
-    return { message: 'Reset email sent' };
   }
 
   async resetPassword(data: ResetPasswordDto) {
+    const decoded = this.jwtService.decode(data.token);
     const user = await this.prismaService.user.findUnique({
-      where: { email: data.email },
+      where: { email: decoded.email },
     });
     if (!user) throw new NotFoundException('User not found');
+
+    if (data.otp !== decoded.otp) throw new BadRequestException('Invalid OTP!');
 
     const hashedNewPassword = await bcrypt.hash(
       data.password,
