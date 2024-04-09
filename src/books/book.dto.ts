@@ -18,9 +18,10 @@ export class CreateBookDto {
   @ApiProperty()
   description: string;
 
+  @IsString()
   @IsNotEmpty()
   @ApiProperty()
-  coverImg: Express.Multer.File;
+  coverImg: string;
 
   @IsString()
   @IsNotEmpty()

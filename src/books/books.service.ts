@@ -2,7 +2,7 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateBookDto } from './book.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { UsersService } from 'src/users/users.service';
-import { FirebaseService } from 'src/firebase/firebase.service';
+
 // import * as fs from 'fs';
 // import { Readable } from 'stream';
 
@@ -16,28 +16,10 @@ export class BooksService {
   constructor(
     private readonly prismaService: PrismaService,
     private readonly userService: UsersService,
-    private readonly firebaseService: FirebaseService,
   ) {}
   async create(book: CreateBookDto & { owner: string }) {
-    // const buffer = Buffer.from(book.coverImg, 'base64');
-
-    // const dummyFile: Express.Multer.File = {
-    //   fieldname: 'coverImg',
-    //   originalname: 'coverImg',
-    //   encoding: 'base64',
-    //   mimetype: 'image/png', // Adjust the mimetype according to your image type
-    //   size: buffer.length, // The size of the buffer
-    //   buffer: buffer,
-    //   stream: new Readable(),
-    //   destination: '',
-    //   filename: 'testtest',
-    //   path: '',
-    // };
-
-    const coverImg = await this.firebaseService.uploadImage(book.coverImg);
-
     return this.prismaService.book.create({
-      data: { ...book, coverImg, owner: { connect: { id: book.owner } } },
+      data: { ...book, owner: { connect: { id: book.owner } } },
     });
   }
 

@@ -7,7 +7,7 @@ import { PrismaModule } from './prisma/prisma.module';
 import { ConfigModule } from '@nestjs/config';
 import { BooksModule } from './books/books.module';
 import { RentalsModule } from './rentals/rentals.module';
-import { FirebaseModule } from './firebase/firebase.module';
+
 import { ChatGateway } from './chat/chat.gateway';
 import { ChatModule } from './chat/chat.module';
 import { JwtStrategy } from './auth/jwt/jwt.strategy';
@@ -20,7 +20,6 @@ import { JwtStrategy } from './auth/jwt/jwt.strategy';
     UsersModule,
     BooksModule,
     RentalsModule,
-    FirebaseModule,
     ChatModule,
   ],
   controllers: [AppController],

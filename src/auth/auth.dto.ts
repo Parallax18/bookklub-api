@@ -38,7 +38,7 @@ export class LoginDto {
 
   @IsString()
   @IsNotEmpty()
-  @MinLength(6)
+  @MinLength(8)
   @ApiProperty()
   password: string;
 }
@@ -68,19 +68,19 @@ export class GenerateAndSendOtpDTO {
 
   @IsString()
   @IsNotEmpty()
-  @MinLength(6)
+  @MinLength(8)
   @ApiProperty()
   password: string;
 }
 
 export class ResetPasswordDto {
-  @IsString()
-  @IsNotEmpty()
-  @ApiProperty()
-  token: string;
-
   @IsEmail()
   @IsNotEmpty()
+  @ApiProperty()
+  email: string;
+  @IsString()
+  @IsNotEmpty()
+  @MinLength(8)
   @ApiProperty()
   password: string;
 }
