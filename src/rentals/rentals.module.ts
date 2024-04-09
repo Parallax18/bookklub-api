@@ -4,7 +4,6 @@ import { RentalsController } from './rentals.controller';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { BooksService } from 'src/books/books.service';
 import { UsersService } from 'src/users/users.service';
-import { FirebaseService } from 'src/firebase/firebase.service';
 import { JwtService } from '@nestjs/jwt';
 
 @Module({
@@ -13,7 +12,6 @@ import { JwtService } from '@nestjs/jwt';
     JwtService,
     RentalsService,
     PrismaService,
-    FirebaseService,
     BooksService,
     UsersService,
   ],

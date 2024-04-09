@@ -119,7 +119,7 @@ export class RentalsService {
   }
 
   runCronJob(): void {
-    cron.schedule('59 23 * * *', async () => {
+    cron.schedule('04/02/2024 06:00:00', async () => {
       try {
         this.logger.log('Running cron job');
         this.findAndUpdateOverdueRentals();

@@ -97,17 +97,17 @@ export class AuthService {
   ) {
     const { OTP, token } = await this.generateOtpAndToken(data);
 
-    await this.mailer.sendMail({
-      type,
-      options: {
-        to: data.email,
-        content: {
-          OTP,
-          name: data.email,
-        },
-      },
-    });
-
+    // await this.mailer.sendMail({
+    //   type,
+    //   options: {
+    //     to: data.email,
+    //     content: {
+    //       OTP,
+    //       name: data.email,
+    //     },
+    //   },
+    // });
+    console.log({ OTP });
     return { token };
   }
 
